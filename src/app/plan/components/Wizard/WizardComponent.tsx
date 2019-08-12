@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Wizard } from '@patternfly/react-core';
+import { Wizard, WizardStep } from '@patternfly/react-core';
 import GeneralForm from './GeneralForm';
 import ResourceSelectForm from './ResourceSelectForm';
 import VolumesForm from './VolumesForm';
@@ -42,7 +42,7 @@ const WizardComponent = props => {
   }
 
   useEffect(() => {
-    const steps = [
+    const steps: WizardStep[] = [
       {
         id: stepId.General,
         name: 'General',
@@ -87,6 +87,9 @@ const WizardComponent = props => {
           !errors.selectedNamespaces,
         canJumpTo: stepIdReached >= stepId.MigrationSource,
       },
+    ];
+
+    const PVsteps: WizardStep[] = [
       {
         id: stepId.PersistentVolumes,
         name: 'Persistent Volumes',
@@ -103,7 +106,11 @@ const WizardComponent = props => {
         enableNext: !isLoading && !isFetchingPVList,
         canJumpTo: stepIdReached >= stepId.PersistentVolumes,
       },
-      {
+    ];
+
+    if (values.persistentVolumes.length > 0 &&
+      !values.persistentVolumes.every(v => v.type === 'move')) {
+      PVsteps.push({
         id: stepId.StorageClass,
         name: 'Storage Class',
         component: (
@@ -123,28 +130,36 @@ const WizardComponent = props => {
           />
         ),
         enableNext: !isLoading,
-        canJumpTo: stepIdReached >= stepId.StorageClass,
-      },
-      {
-        id: stepId.Results,
-        name: 'Results',
-        component: (
-          <ResultsStep
-            values={values}
-            errors={errors}
-            onWizardLoadingToggle={toggleLoading}
-            currentPlan={currentPlan}
-            isCheckingPlanStatus={isCheckingPlanStatus}
-            planList={planList}
-          />
-        ),
-        enableNext: !isLoading,
-        nextButtonText: 'Close',
-        hideCancelButton: true,
-        hideBackButton: true,
-        canJumpTo: stepIdReached >= stepId.Results,
-      },
-    ];
+        canJumpTo: stepIdReached >= stepId.StorageClass
+      });
+    }
+
+    steps.push({
+      id: stepId.PersistentVolumes,
+      name: 'Persistent Volumes',
+      steps: PVsteps,
+      canJumpTo: stepIdReached >= stepId.PersistentVolumes,
+    });
+
+    steps.push({
+      id: stepId.Results,
+      name: 'Results',
+      component: (
+        <ResultsStep
+          values={values}
+          errors={errors}
+          onWizardLoadingToggle={toggleLoading}
+          currentPlan={currentPlan}
+          isCheckingPlanStatus={isCheckingPlanStatus}
+          planList={planList}
+        />
+      ),
+      enableNext: !isLoading,
+      nextButtonText: 'Close',
+      hideCancelButton: true,
+      hideBackButton: true,
+      canJumpTo: stepIdReached >= stepId.Results,
+    });
 
     setUpdatedSteps(steps);
 
