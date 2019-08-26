@@ -19,6 +19,8 @@ import {
   StorageContext,
 } from './duck/context';
 import { createAddEditStatus, AddEditState, AddEditMode } from '../common/add_edit_state';
+import { StatusPollingInterval } from '../common/duck/sagas';
+import { PollingActions } from '../common/duck/actions';
 
 
 interface IProps {
@@ -40,6 +42,10 @@ interface IProps {
   isClosing?: boolean;
   migMeta: string;
   updatePlans: (updatedPlans) => void;
+  startDataListPolling: (params) => void;
+  stopDataListPolling: () => void;
+  startLogsPolling: (plan, migrations) => void;
+  stopLogsPolling: () => void;
   planCloseAndDeleteRequest: (string) => void;
   watchClusterAddEditStatus: (string) => void;
   watchStorageAddEditStatus: (string) => void;
@@ -70,6 +76,7 @@ const DetailViewComponent: React.FunctionComponent<IProps> = (props) => {
     storageAssociatedPlans,
     watchClusterAddEditStatus,
     watchStorageAddEditStatus,
+    stopDataListPolling,
     isClosing,
     isMigrating,
     isStaging,
@@ -117,6 +124,38 @@ const DetailViewComponent: React.FunctionComponent<IProps> = (props) => {
 
 
 
+  const handleStartPolling = () => {
+    const params = {
+      asyncFetch: planOperations.fetchPlansGenerator,
+      callback: this.handlePlanPoll,
+      delay: StatusPollingInterval,
+      retryOnFailure: true,
+      retryAfter: 5,
+      stopAfterRetries: 2,
+    };
+    this.props.startDataListPolling(params);
+  };
+
+    // const {
+    //   allStorage,
+    //   allClusters,
+    //   plansWithStatus,
+    //   clusterAssociatedPlans,
+    //   storageAssociatedPlans,
+    //   watchClusterAddEditStatus,
+    //   watchStorageAddEditStatus,
+    //   stopDataListPolling,
+    //   removeCluster,
+    //   removeStorage,
+    //   migMeta,
+    //   isMigrating,
+    //   isStaging,
+    //   expanded,
+    //   handleExpandDetails,
+    //   isClosing,
+    // } = this.props;
+
+  const { startLogsPolling, stopLogsPolling } = this.props;
   return (
     <React.Fragment>
       <DataList aria-label="data-list-main-container">
@@ -145,14 +184,15 @@ const DetailViewComponent: React.FunctionComponent<IProps> = (props) => {
         </StorageContext.Provider>
         <PlanContext.Provider value={{
           handleStageTriggered,
-          handleDeletePlan
-        }}>
+          handleDeletePlan,
+          startLogsPolling,
+          stopLogsPolling }}>
           <PlanDataListItem
             id={DataListItems.PlanList}
             planList={plansWithStatus}
             clusterList={allClusters}
             storageList={allStorage}
-            onPlanSubmit={handlePlanSubmit}
+            onPlanSubmit={this.handlePlanSubmit}
             plansDisabled={isAddPlanDisabled}
             isLoading={isMigrating || isStaging}
             isExpanded={expandedStateObj[DataListItems.PlanList]}
@@ -199,6 +239,10 @@ const mapDispatchToProps = dispatch => {
       dispatch(PlanActions.updateStageProgress(plan.planName, progress)),
     stagingSuccess: plan => dispatch(PlanActions.stagingSuccess(plan.planName)),
     updatePlans: updatedPlans => dispatch(PlanActions.updatePlans(updatedPlans)),
+    startDataListPolling: params => dispatch(),
+    stopDataListPolling: () => dispatch(),
+    startLogsPolling: (plan, migrations) => dispatch(PollingActions.startLogsPolling(plan, migrations)),
+    stopLogsPolling: () => dispatch(PollingActions.stopLogsPolling()),
     planCloseAndDeleteRequest: planName => dispatch(PlanActions.planCloseAndDeleteRequest(planName)),
     watchClusterAddEditStatus: (clusterName) => {
       // Push the add edit status into watching state, and start watching

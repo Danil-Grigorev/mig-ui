@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import React, { useState, useContext } from 'react';
-import { PlanContext } from '../../../duck/context';
+import { PlanContext, PollingContext } from '../../../duck/context';
 import { Button, Dropdown, DropdownItem, KebabToggle } from '@patternfly/react-core';
 import { useOpenModal } from '../../../duck/hooks';
 import { Flex, Box } from '@rebass/emotion';
@@ -10,6 +10,7 @@ import MigrateModal from '../../../../plan/components/MigrateModal';
 import theme from '../../../../../theme';
 import Loader from 'react-loader-spinner';
 import { css } from '@emotion/core';
+
 const PlanActions = ({ plan, isLoading, isClosing }) => {
   const [isOpen, toggleOpen] = useOpenModal(false);
   const planContext = useContext(PlanContext);
@@ -35,7 +36,16 @@ const PlanActions = ({ plan, isLoading, isClosing }) => {
       isDisabled={isClosing}
     >
       Delete
-    </DropdownItem>
+    </DropdownItem>,
+    <DropdownItem
+      key="showLogs"
+      isDisabled={isClosing}
+      onClick={() => {
+        planContext.startLogsPolling(plan.MigPlan, plan.Migrations);
+        setKebabIsOpen(false);
+      }}>
+      Logs
+      </DropdownItem>,
   ];
 
   return (
