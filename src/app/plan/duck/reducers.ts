@@ -17,6 +17,8 @@ export const INITIAL_STATE = {
   isPVError: false,
   isFetchingPVList: false,
   isFetchingPVResources: false,
+  isFetchingLogs: true,
+  isCheckingPlanStatus: false,
   isError: false,
   isFetching: false,
   migPlanList: [],
@@ -32,7 +34,8 @@ export const INITIAL_STATE = {
   currentPlanStatus: {
     state: CurrentPlanState.Pending,
     errorMessage: ''
-  } as ICurrentPlanStatus
+  } as ICurrentPlanStatus,
+  logs: {}
 };
 
 const sortPlans = planList =>
@@ -327,6 +330,11 @@ export const updateCurrentPlanStatus =
     return {
       ...state, currentPlanStatus: action.currentPlanStatus
     };
+};
+
+export const logsFetchSuccess =
+  (state = INITIAL_STATE, action: ReturnType<typeof PlanActions.logsFetchSuccess>) => {
+    return { ...state, logs: action.logs, isFetchingLogs: false };
   };
 
 const planReducer = (state = INITIAL_STATE, action) => {
@@ -365,6 +373,7 @@ const planReducer = (state = INITIAL_STATE, action) => {
     case PlanActionTypes.PLAN_POLL_STOP: return stopPlanPolling(state, action);
     case PlanActionTypes.RESET_CURRENT_PLAN: return resetCurrentPlan(state, action);
     case PlanActionTypes.SET_CURRENT_PLAN: return setCurrentPlan(state, action);
+    case PlanActionTypes.LOGS_FETCH_SUCCESS: return logsFetchSuccess(state, action);
     default: return state;
   }
 };

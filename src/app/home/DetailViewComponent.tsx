@@ -136,25 +136,6 @@ const DetailViewComponent: React.FunctionComponent<IProps> = (props) => {
     this.props.startDataListPolling(params);
   };
 
-    // const {
-    //   allStorage,
-    //   allClusters,
-    //   plansWithStatus,
-    //   clusterAssociatedPlans,
-    //   storageAssociatedPlans,
-    //   watchClusterAddEditStatus,
-    //   watchStorageAddEditStatus,
-    //   stopDataListPolling,
-    //   removeCluster,
-    //   removeStorage,
-    //   migMeta,
-    //   isMigrating,
-    //   isStaging,
-    //   expanded,
-    //   handleExpandDetails,
-    //   isClosing,
-    // } = this.props;
-
   const { startLogsPolling, stopLogsPolling } = this.props;
   return (
     <React.Fragment>
@@ -239,10 +220,10 @@ const mapDispatchToProps = dispatch => {
       dispatch(PlanActions.updateStageProgress(plan.planName, progress)),
     stagingSuccess: plan => dispatch(PlanActions.stagingSuccess(plan.planName)),
     updatePlans: updatedPlans => dispatch(PlanActions.updatePlans(updatedPlans)),
-    startDataListPolling: params => dispatch(),
-    stopDataListPolling: () => dispatch(),
-    startLogsPolling: (plan, migrations) => dispatch(PollingActions.startLogsPolling(plan, migrations)),
-    stopLogsPolling: () => dispatch(PollingActions.stopLogsPolling()),
+    startDataListPolling: params => dispatch(PlanActions.startPlanPolling(params)),
+    stopDataListPolling: () => dispatch(PlanActions.stopPlanPolling()),
+    startLogsPolling: (plan, migrations) => dispatch(PlanActions.logsPollStart(plan, migrations)),
+    stopLogsPolling: () => dispatch(PlanActions.logsPollStop()),
     planCloseAndDeleteRequest: planName => dispatch(PlanActions.planCloseAndDeleteRequest(planName)),
     watchClusterAddEditStatus: (clusterName) => {
       // Push the add edit status into watching state, and start watching

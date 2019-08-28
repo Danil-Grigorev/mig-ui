@@ -10,9 +10,11 @@ import MigrateModal from '../../../../plan/components/MigrateModal';
 import theme from '../../../../../theme';
 import Loader from 'react-loader-spinner';
 import { css } from '@emotion/core';
+import LogsModal from '../../../../plan/components/LogsModal';
 
 const PlanActions = ({ plan, isLoading, isClosing }) => {
   const [isOpen, toggleOpen] = useOpenModal(false);
+  const [isLogsViewOpen, toggleLogsViewOpen] = useOpenModal(false);
   const planContext = useContext(PlanContext);
   const {
     hasClosedCondition,
@@ -43,6 +45,7 @@ const PlanActions = ({ plan, isLoading, isClosing }) => {
       onClick={() => {
         planContext.startLogsPolling(plan.MigPlan, plan.Migrations);
         setKebabIsOpen(false);
+        toggleLogsViewOpen();
       }}>
       Logs
       </DropdownItem>,
@@ -100,6 +103,7 @@ const PlanActions = ({ plan, isLoading, isClosing }) => {
           dropdownItems={kebabDropdownItems}
         />
       </Box>
+      <LogsModal isOpen={isLogsViewOpen} onHandleClose={toggleLogsViewOpen}/>
 
       {isLoading && (
         <Box

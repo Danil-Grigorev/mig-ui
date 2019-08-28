@@ -1,6 +1,7 @@
-import { IMigPlan } from '../../../client/resources/conversions';
+import { IMigPlan, IMigMigration } from '../../../client/resources/conversions';
 import { PollingActionTypes } from '../../common/duck/actions';
 import { ICurrentPlanStatus } from './reducers';
+import { IMigrationLogs } from './sagas';
 
 export const PlanActionTypes = {
   UPDATE_PLANS: 'UPDATE_PLANS',
@@ -49,7 +50,12 @@ export const PlanActionTypes = {
   PLAN_POLL_START: 'PLAN_POLL_START',
   PLAN_POLL_STOP: 'PLAN_POLL_STOP',
   RESET_CURRENT_PLAN: 'RESET_CURRENT_PLAN',
-  SET_CURRENT_PLAN: 'SET_CURRENT_PLAN'
+  SET_CURRENT_PLAN: 'SET_CURRENT_PLAN',
+  LOGS_POLL_START: 'LOGS_POLL_START',
+  LOGS_POLL_STOP: 'LOGS_POLL_STOP',
+  LOGS_FETCH_REQUEST: 'LOGS_FETCH_REQUEST',
+  LOGS_FETCH_SUCCESS: 'LOGS_FETCH_SUCCESS',
+  LOGS_FETCH_FAILURE: 'LOGS_FETCH_FAILURE',
 };
 
 const updatePlans = (updatedPlans: IMigPlan[]) => ({
@@ -267,6 +273,27 @@ const updateCurrentPlanStatus = (currentPlanStatus: ICurrentPlanStatus) => ({
   currentPlanStatus,
 });
 
+const logsPollStart = (plan: IMigPlan, migrations: IMigMigration[]) => ({
+  type: PlanActionTypes.LOGS_POLL_START,
+  plan,
+  migrations
+});
+
+const logsPollStop = () => ({
+  type: PlanActionTypes.LOGS_POLL_STOP,
+});
+
+const logsFetchSuccess = (logs: IMigrationLogs) => ({
+  type: PlanActionTypes.LOGS_FETCH_SUCCESS,
+  logs
+});
+
+const logsFetchFailure = (error: string) => ({
+  type: PlanActionTypes.LOGS_FETCH_FAILURE,
+  error
+});
+
+
 export const PlanActions = {
   updatePlans,
   addPlanSuccess,
@@ -312,5 +339,9 @@ export const PlanActions = {
   startPlanPolling,
   stopPlanPolling,
   resetCurrentPlan,
-  setCurrentPlan
+  setCurrentPlan,
+  logsPollStart,
+  logsPollStop,
+  logsFetchSuccess,
+  logsFetchFailure
 };
