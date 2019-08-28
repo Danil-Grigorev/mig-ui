@@ -450,7 +450,6 @@ function* collectLogs(action) {
       return veleroLogs.concat(resticLogs);
     });
     yield Q.allSettled(logResults);
-
     yield put(PlanActions.logsFetchSuccess(migrationLogs));
   } catch (err) {
     yield put(PlanActions.logsFetchFailure('Failed to get logs'));
@@ -459,8 +458,8 @@ function* collectLogs(action) {
 
 function* watchLogsPolling() {
   while (true) {
-    const action = yield take(PlanActionTypes.LOGS_POLL_START);
-    yield race([call(collectLogs, action), take(PlanActionTypes.LOGS_POLL_STOP)]);
+    const action = yield take(PlanActionTypes.LOGS_FETCH_REQUEST);
+    yield call(collectLogs, action);
   }
 }
 

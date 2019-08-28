@@ -43,7 +43,7 @@ const PlanActions = ({ plan, isLoading, isClosing }) => {
       key="showLogs"
       isDisabled={isClosing}
       onClick={() => {
-        planContext.startLogsPolling(plan.MigPlan, plan.Migrations);
+        planContext.logsFetchRequest(plan.MigPlan, plan.Migrations);
         setKebabIsOpen(false);
         toggleLogsViewOpen();
       }}>
@@ -103,7 +103,7 @@ const PlanActions = ({ plan, isLoading, isClosing }) => {
           dropdownItems={kebabDropdownItems}
         />
       </Box>
-      <LogsModal isOpen={isLogsViewOpen} onHandleClose={toggleLogsViewOpen}/>
+      <LogsModal plan={plan.MigPlan} isOpen={isLogsViewOpen} onHandleClose={toggleLogsViewOpen}/>
 
       {isLoading && (
         <Box

@@ -44,8 +44,7 @@ interface IProps {
   updatePlans: (updatedPlans) => void;
   startDataListPolling: (params) => void;
   stopDataListPolling: () => void;
-  startLogsPolling: (plan, migrations) => void;
-  stopLogsPolling: () => void;
+  logsFetchRequest: (plan, migrations) => void;
   planCloseAndDeleteRequest: (string) => void;
   watchClusterAddEditStatus: (string) => void;
   watchStorageAddEditStatus: (string) => void;
@@ -81,6 +80,7 @@ const DetailViewComponent: React.FunctionComponent<IProps> = (props) => {
     isMigrating,
     isStaging,
     migMeta,
+    logsFetchRequest,
   } = props;
 
   const [isAddPlanDisabled, setAddPlanDisabled] = useState(true);
@@ -136,7 +136,6 @@ const DetailViewComponent: React.FunctionComponent<IProps> = (props) => {
     this.props.startDataListPolling(params);
   };
 
-  const { startLogsPolling, stopLogsPolling } = this.props;
   return (
     <React.Fragment>
       <DataList aria-label="data-list-main-container">
@@ -166,8 +165,9 @@ const DetailViewComponent: React.FunctionComponent<IProps> = (props) => {
         <PlanContext.Provider value={{
           handleStageTriggered,
           handleDeletePlan,
-          startLogsPolling,
-          stopLogsPolling }}>
+          logsFetchRequest,
+          stopDataListPolling,
+          startDefaultDataListPolling: this.handleStartPolling }}>
           <PlanDataListItem
             id={DataListItems.PlanList}
             planList={plansWithStatus}
@@ -222,8 +222,7 @@ const mapDispatchToProps = dispatch => {
     updatePlans: updatedPlans => dispatch(PlanActions.updatePlans(updatedPlans)),
     startDataListPolling: params => dispatch(PlanActions.startPlanPolling(params)),
     stopDataListPolling: () => dispatch(PlanActions.stopPlanPolling()),
-    startLogsPolling: (plan, migrations) => dispatch(PlanActions.logsPollStart(plan, migrations)),
-    stopLogsPolling: () => dispatch(PlanActions.logsPollStop()),
+    logsFetchRequest: (plan, migrations) => dispatch(PlanActions.logsFetchRequest(plan, migrations)),
     planCloseAndDeleteRequest: planName => dispatch(PlanActions.planCloseAndDeleteRequest(planName)),
     watchClusterAddEditStatus: (clusterName) => {
       // Push the add edit status into watching state, and start watching

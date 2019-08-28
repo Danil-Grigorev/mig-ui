@@ -51,8 +51,6 @@ export const PlanActionTypes = {
   PLAN_POLL_STOP: 'PLAN_POLL_STOP',
   RESET_CURRENT_PLAN: 'RESET_CURRENT_PLAN',
   SET_CURRENT_PLAN: 'SET_CURRENT_PLAN',
-  LOGS_POLL_START: 'LOGS_POLL_START',
-  LOGS_POLL_STOP: 'LOGS_POLL_STOP',
   LOGS_FETCH_REQUEST: 'LOGS_FETCH_REQUEST',
   LOGS_FETCH_SUCCESS: 'LOGS_FETCH_SUCCESS',
   LOGS_FETCH_FAILURE: 'LOGS_FETCH_FAILURE',
@@ -273,14 +271,10 @@ const updateCurrentPlanStatus = (currentPlanStatus: ICurrentPlanStatus) => ({
   currentPlanStatus,
 });
 
-const logsPollStart = (plan: IMigPlan, migrations: IMigMigration[]) => ({
-  type: PlanActionTypes.LOGS_POLL_START,
+const logsFetchRequest = (plan: IMigPlan, migrations: IMigMigration[]) => ({
+  type: PlanActionTypes.LOGS_FETCH_REQUEST,
   plan,
   migrations
-});
-
-const logsPollStop = () => ({
-  type: PlanActionTypes.LOGS_POLL_STOP,
 });
 
 const logsFetchSuccess = (logs: IMigrationLogs) => ({
@@ -340,8 +334,7 @@ export const PlanActions = {
   stopPlanPolling,
   resetCurrentPlan,
   setCurrentPlan,
-  logsPollStart,
-  logsPollStop,
+  logsFetchRequest,
   logsFetchSuccess,
   logsFetchFailure
 };

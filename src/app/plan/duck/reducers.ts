@@ -325,12 +325,18 @@ export const setCurrentPlan = (state = INITIAL_STATE, action) => {
     currentPlan: action.currentPlan
   };
 };
+
 export const updateCurrentPlanStatus =
   (state = INITIAL_STATE, action: ReturnType<typeof PlanActions.updateCurrentPlanStatus>) => {
     return {
       ...state, currentPlanStatus: action.currentPlanStatus
     };
 };
+
+export const logsFetchRequest =
+  (state = INITIAL_STATE, action: ReturnType<typeof PlanActions.logsFetchSuccess>) => {
+    return { ...state, isFetchingLogs: true };
+  };
 
 export const logsFetchSuccess =
   (state = INITIAL_STATE, action: ReturnType<typeof PlanActions.logsFetchSuccess>) => {
@@ -373,6 +379,7 @@ const planReducer = (state = INITIAL_STATE, action) => {
     case PlanActionTypes.PLAN_POLL_STOP: return stopPlanPolling(state, action);
     case PlanActionTypes.RESET_CURRENT_PLAN: return resetCurrentPlan(state, action);
     case PlanActionTypes.SET_CURRENT_PLAN: return setCurrentPlan(state, action);
+    case PlanActionTypes.LOGS_FETCH_REQUEST: return logsFetchRequest(state, action);
     case PlanActionTypes.LOGS_FETCH_SUCCESS: return logsFetchSuccess(state, action);
     default: return state;
   }
