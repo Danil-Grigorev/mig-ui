@@ -1,9 +1,9 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState, useRef, useLayoutEffect, Suspense, lazy} from 'react';
 import { connect } from 'react-redux';
 import { Modal, TextArea, FormSelect } from '@patternfly/react-core';
-import { PollingContext } from '../../../home/duck/context';
+import { PollingContext, PlanContext } from '../../../home/duck/context';
 import { AddEditMode, defaultAddEditStatus } from '../../../common/add_edit_state';
 import Select from 'react-select';
 import styled from '@emotion/styled';
@@ -21,6 +21,7 @@ const LogsModal = ({
   ...props
 }) => {
   const pollingContext = useContext(PollingContext);
+  const planContext = useContext(PlanContext);
   const [cluster, setCluster] = useState({
     label: 'host',
     value: 'host'
@@ -65,26 +66,23 @@ const LogsModal = ({
   useEffect(() => {
     if (isOpen) {
       pollingContext.stopAllPolling();
+      planContext.stopDataListPolling();
     }
   });
 
   const onClose = () => {
     pollingContext.startAllDefaultPolling();
+    planContext.startDefaultDataListPolling();
     onHandleClose();
   };
-
 
   const modalTitle = 'Plan logs';
 
   const StyledModal = styled(Modal)`
     margin: 1em 0 1em 0;
-    width: 80%;
     height: 80%;
   `;
-  const StyledText = styled(TextArea)`
-    margin: 1em 0 1em 0;
-    height: 90%;
-  `;
+  const LogItem = lazy(() => import('./LogItem'));
   return (
     <StyledModal
       isOpen={isOpen}
@@ -92,68 +90,74 @@ const LogsModal = ({
       title={modalTitle}>
       {isFetchingLogs ?
         null
-        : (<Select
-          name="selectCluster"
-          value={cluster}
-          onChange={clusterSelected => {
-            setCluster(clusterSelected);
-            setLogSource({
-              label: '?',
-              value: '?'
-            });
-            setPodIndex({
-              label: '?',
-              value: -1
-            });
-          }}
-          options={clusters}
-        />)}
-      {isFetchingLogs ?
-        null
-        : (<Select
-          name="selectLogSource"
-          value={logSource}
-          onChange={logSourceSelected => {
-            setLogSource(logSourceSelected);
-            setPodIndex({
-              label: '?',
-              value: -1
-            });
-          }}
-          options={logSources}
-        />)}
-      {isFetchingLogs ?
-        null
-        : (<Select
-          name="selectPod"
-          value={podIndex}
-          onChange={pod => {
-            setPodIndex(pod);
-            setLog(logs[cluster.value][logSource.value][0].log);
-          }}
-          options={pods}
-        />)}
+        :
+        (<Flex css={css`margin: 1em;`}>
+          <Box mx="3em" flex="auto">
+            <Text>Select Cluster</Text>
+            <Select
+              name="selectCluster"
+              value={cluster}
+              onChange={clusterSelected => {
+                setCluster(clusterSelected);
+                setLogSource({
+                  label: '?',
+                  value: '?'
+                });
+                setPodIndex({
+                  label: '?',
+                  value: -1
+                });
+                setLog('');
+              }}
+              options={clusters}
+            />
+          </Box>
+          <Box mx="3em 3em" flex="auto">
+            <Text>Select Log Source</Text>
+            <Select
+              name="selectLogSource"
+              value={logSource}
+              onChange={logSourceSelected => {
+                setLogSource(logSourceSelected);
+                setPodIndex({
+                  label: '?',
+                  value: -1
+                });
+                setLog('');
+              }}
+              options={logSources}
+              />
+          </Box>
+          <Box mx="3em" flex="auto">
+            <Text>Select Pod Source</Text>
+            <Select
+              name="selectPod"
+              value={podIndex}
+              onChange={pod => {
+                setPodIndex(pod);
+                setLog(logs[cluster.value][logSource.value][0].log);
+              }}
+              options={pods}
+              />
+          </Box>
+        </Flex>)}
+      <Flex css={css`
+        height: 80%;
+        text-align: center;`}>
       {isFetchingLogs ? (
-        <Flex
-        css={css`
-            height: 100%;
-            text-align: center;
-          `}>
         <Box flex="1" m="auto">
           <Loader type="ThreeDots" color={theme.colors.navy} height="100" width="100" />
-          <Text fontSize={[2, 3, 4]}>Fetching logs</Text>
-        </Box>
-      </Flex>)
-        : log === '' ?
-          <Flex
-            css={css`
-            height: 100%;
-            text-align: center;
-          `}>
+            <Text fontSize={[2, 3, 4]}>Fetching logs</Text>)
+        </Box>)
+        : log === '' ? (
             <Box flex="1" m="auto">
-              <Text fontSize={[2, 3, 4]}>Nothing to display</Text>
-            </Box>
-          </Flex> : (<StyledText height={'90%'} id="logArea" value={log} />)}
+              <Text fontSize={[2, 3, 4]}>Select pod to display logs</Text>
+            </Box>)
+            : (<Suspense fallback={<div>Loading</div>}>
+                <LogItem log={log} />
+              </Suspense>)
+        }
+      </Flex>
     </StyledModal>
   );
 };

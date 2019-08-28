@@ -6,7 +6,6 @@ import {
   PollingActionTypes,
   AlertActionTypes
 } from '../../common/duck/actions';
-<<<<<<< HEAD
 import { PlanActions, PlanActionTypes } from '../../plan/duck/actions';
 import { StorageActions, StorageActionTypes } from '../../storage/duck/actions';
 import { ClusterActions, ClusterActionTypes } from '../../cluster/duck/actions';
@@ -14,11 +13,6 @@ import { MigResource, ExtendedCoreNamespacedResource, CoreNamespacedResourceKind
 import { ClientFactory } from '../../../client/client_factory';
 import { IClusterClient } from '../../../client/client';
 import Q from 'q';
-=======
-
-import { ClusterActions } from '../../cluster/duck/actions';
-import { StorageActions } from '../../storage/duck/actions';
->>>>>>> 8b771f9... Added initial UI
 
 export const StatusPollingInterval = 4000;
 const ErrorToastTimeout = 5000;
