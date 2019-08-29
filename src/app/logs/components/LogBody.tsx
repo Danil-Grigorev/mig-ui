@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import { lazy, Suspense } from 'react';
-import theme from '../../../../theme';
+import theme from '../../../theme';
 import { Box, Flex, Text } from '@rebass/emotion';
 import { css } from '@emotion/core';
 import Loader from 'react-loader-spinner';

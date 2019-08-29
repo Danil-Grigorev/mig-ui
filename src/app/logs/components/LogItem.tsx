@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import { TextArea } from '@patternfly/react-core';
-import theme from '../../../../theme';
+import theme from '../../../theme';
 import styled from '@emotion/styled';
 import { Box } from '@rebass/emotion';
 

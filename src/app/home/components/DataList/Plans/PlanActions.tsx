@@ -49,7 +49,8 @@ const PlanActions = ({ plan, isLoading, isClosing }) => {
     //   toggleLogsViewOpen();
     // }}>
     >
-      <Link to="/logs">Logs</Link>
+      {/* <Link to="logs" params={{ planId: plan.MigPlan.planName }}>Logs</Link> */}
+      <Link to={'/logs/' + plan.MigPlan.metadata.name}>Logs</Link>
 
     </DropdownItem>,
   ];

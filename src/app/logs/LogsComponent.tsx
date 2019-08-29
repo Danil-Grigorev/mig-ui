@@ -7,12 +7,14 @@ import {
 } from '@patternfly/react-core';
 import HeaderComponent from '../common/components/HeaderComponent';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbHeading } from '@patternfly/react-core';
-import { Link } from "react-router-dom";
+import { Route, Link } from "react-router-dom";
+import LogsContainer from './components/LogsContainer';
 
 interface IProps {
+  match: any;
 }
 
-const LogsComponent: React.FunctionComponent<IProps> = (props) => {
+const LogsComponent: React.FunctionComponent<IProps> = ({ match }) => {
   return (
     <Page header={HeaderComponent}>
       <PageSection>
@@ -22,7 +24,7 @@ const LogsComponent: React.FunctionComponent<IProps> = (props) => {
               <BreadcrumbItem>
                 <Link to="/">Home</Link>
               </BreadcrumbItem>
-              <BreadcrumbItem to="#" isActive>Section Title</BreadcrumbItem>
+              <BreadcrumbItem to="#" isActive>{match.params.planId} Logs</BreadcrumbItem>
             </Breadcrumb>
           </Box>
         </Flex>
@@ -30,7 +32,8 @@ const LogsComponent: React.FunctionComponent<IProps> = (props) => {
       <PageSection>
         <Flex justifyContent="center">
           <Box flex="0 0 100%">
-            logs here
+            {/* <LogsContainer /> */}
+            **Implement logs component here**
           </Box>
         </Flex>
       </PageSection>

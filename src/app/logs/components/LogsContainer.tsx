@@ -4,14 +4,15 @@ import {
   useEffect,
   useContext,
   useState,
-  FunctionComponent} from 'react';
+  FunctionComponent
+} from 'react';
 import { connect } from 'react-redux';
-import { Modal } from '@patternfly/react-core';
-import { PollingContext } from '../../../home/duck/context';
+import { PageSection } from '@patternfly/react-core';
+import { PollingContext } from '../../home/duck/context';
 import styled from '@emotion/styled';
-import { IMigrationLogs, ClusterKind, LogKind, ILog, IMigrationClusterLog } from '../../duck/sagas';
-import { PlanActions } from '../../duck';
-import { IMigPlan, IMigMigration } from '../../../../client/resources/conversions';
+import { IMigrationLogs, ClusterKind, LogKind, ILog, IMigrationClusterLog } from '../../plan/duck/sagas';
+import { PlanActions } from '../../plan/duck';
+import { IMigPlan, IMigMigration } from '../../../client/resources/conversions';
 import LogHeader from './LogHeader';
 import LogBody from './LogBody';
 import LogFooter from './LogFooter';
@@ -26,7 +27,7 @@ interface IProps {
   refreshLogs: (plan: IMigPlan, migrations: IMigMigration[]) => void;
 }
 
-const LogsModal: FunctionComponent<IProps> = ({
+const LogsContainer: FunctionComponent<IProps> = ({
   isOpen,
   onHandleClose,
   isFetchingLogs,
@@ -49,13 +50,21 @@ const LogsModal: FunctionComponent<IProps> = ({
   });
   const [log, setLog] = useState('');
 
-  const pollingContext = useContext(PollingContext);
+  // const pollingContext = useContext(PollingContext);
 
-  useEffect(() => {
-    if (isOpen && isFetchingLogs) {
-      pollingContext.stopAllPolling();
-    }
-  }, [isOpen]);
+  // useEffect(() => 
+  // const pollingContext = useContext(PollingContext);
+
+  // useEffect(() => {
+  //   if (isOpen && isFetchingLogs) {
+  //     pollingContext.stopAllPolling();
+  //   }
+  // }, [isOpen]);
+
+  //   if (isOpen && isFetchingLogs) {
+  //     pollingContext.stopAllPolling();
+  //   }
+  // }, [isOpen]);
 
   const downloadLogHandle = (clusterType, podLogType, logIndex) => {
     console.error(logs);
@@ -93,22 +102,12 @@ const LogsModal: FunctionComponent<IProps> = ({
             downloadLogHandle(clName, logPodType, logPodIndex))));
   };
 
-  const onClose = () => {
-    pollingContext.startAllDefaultPolling();
-    onHandleClose();
-  };
 
   const modalTitle = `Plan Logs - "${plan.metadata.name}"`;
 
-  const StyledModal = styled(Modal)`
-    margin: 1em 0 1em 0;
-    height: 90%;
-  `;
 
   return (
-    <StyledModal
-      isOpen={isOpen}
-      onClose={onClose}
+    <PageSection
       title={modalTitle}>
       <LogHeader
         logs={logs}
@@ -125,7 +124,7 @@ const LogsModal: FunctionComponent<IProps> = ({
       <LogBody
         isFetchingLogs={isFetchingLogs}
         log={log}
-        downloadAllHandle={downloadAllHandle}/>
+        downloadAllHandle={downloadAllHandle} />
       <LogFooter
         isFetchingLogs={isFetchingLogs}
         log={log}
@@ -133,8 +132,8 @@ const LogsModal: FunctionComponent<IProps> = ({
         cluster={cluster}
         podType={podType}
         podIndex={podIndex}
-        refreshLogs={() => refreshLogs(plan, migrations)}/>
-    </StyledModal>
+        refreshLogs={() => refreshLogs(plan, migrations)} />
+    </PageSection>
   );
 };
 
@@ -151,4 +150,4 @@ export default connect(
       refreshLogs: (plan, migrations) => dispatch(PlanActions.logsFetchRequest(plan, migrations))
     };
   }
-)(LogsModal);
+)(LogsContainer);
