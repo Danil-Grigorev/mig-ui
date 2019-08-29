@@ -42,8 +42,6 @@ interface IProps {
   isClosing?: boolean;
   migMeta: string;
   updatePlans: (updatedPlans) => void;
-  startDataListPolling: (params) => void;
-  stopDataListPolling: () => void;
   logsFetchRequest: (plan, migrations) => void;
   planCloseAndDeleteRequest: (string) => void;
   watchClusterAddEditStatus: (string) => void;
@@ -75,7 +73,6 @@ const DetailViewComponent: React.FunctionComponent<IProps> = (props) => {
     storageAssociatedPlans,
     watchClusterAddEditStatus,
     watchStorageAddEditStatus,
-    stopDataListPolling,
     isClosing,
     isMigrating,
     isStaging,
@@ -123,19 +120,6 @@ const DetailViewComponent: React.FunctionComponent<IProps> = (props) => {
   };
 
 
-
-  const handleStartPolling = () => {
-    const params = {
-      asyncFetch: planOperations.fetchPlansGenerator,
-      callback: this.handlePlanPoll,
-      delay: StatusPollingInterval,
-      retryOnFailure: true,
-      retryAfter: 5,
-      stopAfterRetries: 2,
-    };
-    this.props.startDataListPolling(params);
-  };
-
   return (
     <React.Fragment>
       <DataList aria-label="data-list-main-container">
@@ -165,15 +149,13 @@ const DetailViewComponent: React.FunctionComponent<IProps> = (props) => {
         <PlanContext.Provider value={{
           handleStageTriggered,
           handleDeletePlan,
-          logsFetchRequest,
-          stopDataListPolling,
-          startDefaultDataListPolling: this.handleStartPolling }}>
+          logsFetchRequest }}>
           <PlanDataListItem
             id={DataListItems.PlanList}
             planList={plansWithStatus}
             clusterList={allClusters}
             storageList={allStorage}
-            onPlanSubmit={this.handlePlanSubmit}
+            onPlanSubmit={handlePlanSubmit}
             plansDisabled={isAddPlanDisabled}
             isLoading={isMigrating || isStaging}
             isExpanded={expandedStateObj[DataListItems.PlanList]}
@@ -220,8 +202,6 @@ const mapDispatchToProps = dispatch => {
       dispatch(PlanActions.updateStageProgress(plan.planName, progress)),
     stagingSuccess: plan => dispatch(PlanActions.stagingSuccess(plan.planName)),
     updatePlans: updatedPlans => dispatch(PlanActions.updatePlans(updatedPlans)),
-    startDataListPolling: params => dispatch(PlanActions.startPlanPolling(params)),
-    stopDataListPolling: () => dispatch(PlanActions.stopPlanPolling()),
     logsFetchRequest: (plan, migrations) => dispatch(PlanActions.logsFetchRequest(plan, migrations)),
     planCloseAndDeleteRequest: planName => dispatch(PlanActions.planCloseAndDeleteRequest(planName)),
     watchClusterAddEditStatus: (clusterName) => {

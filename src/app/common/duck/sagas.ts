@@ -1,18 +1,13 @@
-import { takeLatest, race, call, delay, take, put, select } from 'redux-saga/effects';
-
+import { takeLatest, race, call, delay, take, put } from 'redux-saga/effects';
 import {
   AlertActions,
   PollingActions,
   PollingActionTypes,
   AlertActionTypes
 } from '../../common/duck/actions';
-import { PlanActions, PlanActionTypes } from '../../plan/duck/actions';
-import { StorageActions, StorageActionTypes } from '../../storage/duck/actions';
-import { ClusterActions, ClusterActionTypes } from '../../cluster/duck/actions';
-import { MigResource, ExtendedCoreNamespacedResource, CoreNamespacedResourceKind, ExtendedCoreNamespacedResourceKind, CoreClusterResource, CoreNamespacedResource, MigResourceKind } from '../../../client/resources';
-import { ClientFactory } from '../../../client/client_factory';
-import { IClusterClient } from '../../../client/client';
-import Q from 'q';
+import { PlanActionTypes } from '../../plan/duck/actions';
+import { StorageActionTypes } from '../../storage/duck/actions';
+import { ClusterActionTypes } from '../../cluster/duck/actions';
 
 export const StatusPollingInterval = 4000;
 const ErrorToastTimeout = 5000;

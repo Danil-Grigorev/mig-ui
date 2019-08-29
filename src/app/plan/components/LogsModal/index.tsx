@@ -7,7 +7,7 @@ import {
   FunctionComponent} from 'react';
 import { connect } from 'react-redux';
 import { Modal } from '@patternfly/react-core';
-import { PollingContext, PlanContext } from '../../../home/duck/context';
+import { PollingContext } from '../../../home/duck/context';
 import styled from '@emotion/styled';
 import { IMigrationLogs, ClusterKind, LogKind, ILog, IMigrationClusterLog } from '../../duck/sagas';
 import { PlanActions } from '../../duck';
@@ -50,16 +50,16 @@ const LogsModal: FunctionComponent<IProps> = ({
   const [log, setLog] = useState('');
 
   const pollingContext = useContext(PollingContext);
-  const planContext = useContext(PlanContext);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && isFetchingLogs) {
       pollingContext.stopAllPolling();
-      planContext.stopDataListPolling();
     }
-  });
+  }, [isOpen]);
 
   const downloadLogHandle = (clusterType, podLogType, logIndex) => {
+    console.error(logs);
+    console.error(clusterType, podLogType, logIndex);
     const element = document.createElement('a');
     const podName = logs[clusterType][podLogType][logIndex].podName;
     const file = new Blob([logs[clusterType][podLogType][logIndex].log], { type: 'text/plain' });
@@ -95,7 +95,6 @@ const LogsModal: FunctionComponent<IProps> = ({
 
   const onClose = () => {
     pollingContext.startAllDefaultPolling();
-    planContext.startDefaultDataListPolling();
     onHandleClose();
   };
 
@@ -130,7 +129,7 @@ const LogsModal: FunctionComponent<IProps> = ({
       <LogFooter
         isFetchingLogs={isFetchingLogs}
         log={log}
-        downloadHandle={() => downloadLogHandle(cluster.label, podType.label, podIndex.label)}
+        downloadHandle={() => downloadLogHandle(cluster.label, podType.label, podIndex.value)}
         cluster={cluster}
         podType={podType}
         podIndex={podIndex}

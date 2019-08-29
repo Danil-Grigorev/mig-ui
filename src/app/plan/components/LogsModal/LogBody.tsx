@@ -26,7 +26,7 @@ const LogBody = ({
           <Box flex="1" m="auto">
             <Text fontSize={[2, 3, 4]}>Select pod to display logs</Text>
             <Text fontSize={[2, 3, 4]}>or</Text>
-            <Button onClick={downloadAllHandle} variant="primary">Download All Logs</Button>
+            <Button onClick={downloadAllHandle} variant="primary">Download Logs</Button>
           </Box>)
           : (<Suspense fallback={<div>Loading</div>}>
             <LogItem log={log} />

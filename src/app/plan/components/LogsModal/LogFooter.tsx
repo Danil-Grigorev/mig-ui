@@ -19,7 +19,7 @@ const LogFooter = ({
             onClick={downloadHandle}
             isDisabled={!log}
             variant="primary">
-            Download Selected Log
+            Download Selected
             </Button>
         </Box>
         <Box flex="0" mx="1em">
