@@ -2,7 +2,6 @@
 
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import { useRef, useLayoutEffect, lazy } from 'react';
 import { TextArea } from '@patternfly/react-core';
 import theme from '../../../../theme';
 import styled from '@emotion/styled';
