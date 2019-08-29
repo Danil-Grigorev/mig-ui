@@ -1,13 +1,13 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import { lazy, Suspense} from 'react';
+import { lazy, Suspense } from 'react';
 import theme from '../../../../theme';
 import { Box, Flex, Text } from '@rebass/emotion';
 import { css } from '@emotion/core';
 import Loader from 'react-loader-spinner';
 import { Button } from '@patternfly/react-core';
-
-const LogItem = lazy(() => import('./LogItem'));
+import LogItem from './LogItem';
+// const LogItem = lazy(() => import('./LogItem'));
 
 const LogBody = ({
   isFetchingLogs,

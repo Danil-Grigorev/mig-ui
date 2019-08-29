@@ -11,6 +11,7 @@ import theme from '../../../../../theme';
 import Loader from 'react-loader-spinner';
 import { css } from '@emotion/core';
 import LogsModal from '../../../../plan/components/LogsModal';
+import { Link } from "react-router-dom";
 
 const PlanActions = ({ plan, isLoading, isClosing }) => {
   const [isOpen, toggleOpen] = useOpenModal(false);
@@ -42,13 +43,15 @@ const PlanActions = ({ plan, isLoading, isClosing }) => {
     <DropdownItem
       key="showLogs"
       isDisabled={isClosing}
-      onClick={() => {
-        planContext.logsFetchRequest(plan.MigPlan, plan.Migrations);
-        setKebabIsOpen(false);
-        toggleLogsViewOpen();
-      }}>
-      Logs
-      </DropdownItem>,
+    // onClick={() => {
+    //   planContext.logsFetchRequest(plan.MigPlan, plan.Migrations);
+    //   setKebabIsOpen(false);
+    //   toggleLogsViewOpen();
+    // }}>
+    >
+      <Link to="/logs">Logs</Link>
+
+    </DropdownItem>,
   ];
 
   return (
@@ -103,7 +106,7 @@ const PlanActions = ({ plan, isLoading, isClosing }) => {
           dropdownItems={kebabDropdownItems}
         />
       </Box>
-      <LogsModal plan={plan.MigPlan} isOpen={isLogsViewOpen} onHandleClose={toggleLogsViewOpen}/>
+      <LogsModal plan={plan.MigPlan} isOpen={isLogsViewOpen} onHandleClose={toggleLogsViewOpen} />
 
       {isLoading && (
         <Box
